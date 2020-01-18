@@ -167,7 +167,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
             _properties.Remove(member.Name);
             _propertiesToIgnore.Add(member.Name);
             return this;
-        }
+        }        
 
         /// <summary>
         ///     Maps a row key property.
@@ -194,6 +194,38 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
             var member = GetMemberInfoFromLambda(propertyLambda);
             _nameChanges.Add(member.Name, PartitionKeyPropertyName);
             _properties[member.Name] = new PartitionKeyProperty<T>(member);
+            return this;
+        }
+
+        /// <summary>
+        ///     Maps a partition key property.
+        /// </summary>
+        /// <typeparam name="TMember">Entity member.</typeparam>
+        /// <param name="propertyLambda">Property lambda expression.</param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> PartitionKeyMap(Expression<Func<T, string>> propertyLambda)
+        {
+            _properties[PartitionKeyPropertyName] = new PartitionKeyMapProperty<T>(propertyLambda);
+            return this;
+        }
+
+        public EntityTypeMap<T> RowKeyMap(Expression<Func<T, string>> propertyLambda)
+        {
+            _properties[RowKeyPropertyName] = new RowKeyMapProperty<T>(propertyLambda);
+            return this;
+        }
+
+        /// <summary>
+        ///     Reverse maps expression to property.
+        /// </summary>
+        /// <typeparam name="TMember">Source member.</typeparam>
+        /// <param name="destination">Destination lambda expression.</param>
+        /// <param name="source">Source lambda expression.</param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<T, TMember>> destination, Expression<Func<DynamicTableEntity, TMember>> source)
+        {
+            var member = GetMemberInfoFromLambda(destination);
+            _properties[member.Name] = new ReverseMapProperty<T, TMember>(source, member);
             return this;
         }
 
