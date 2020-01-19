@@ -198,19 +198,33 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         }
 
         /// <summary>
-        ///     Maps a partition key property.
+        ///     Maps a partition key property to custom expression.
         /// </summary>
-        /// <typeparam name="TMember">Entity member.</typeparam>
         /// <param name="propertyLambda">Property lambda expression.</param>
         /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
         public EntityTypeMap<T> PartitionKeyMap(Expression<Func<T, string>> propertyLambda)
         {
+            if (propertyLambda == null)
+            {
+                throw new ArgumentNullException(nameof(propertyLambda));
+            }
+
             _properties[PartitionKeyPropertyName] = new PartitionKeyMapProperty<T>(propertyLambda);
             return this;
         }
 
+        /// <summary>
+        /// Maps a row key property to custom expression.
+        /// </summary>
+        /// <param name="propertyLambda"></param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
         public EntityTypeMap<T> RowKeyMap(Expression<Func<T, string>> propertyLambda)
         {
+            if (propertyLambda == null)
+            {
+                throw new ArgumentNullException(nameof(propertyLambda));
+            }
+
             _properties[RowKeyPropertyName] = new RowKeyMapProperty<T>(propertyLambda);
             return this;
         }
@@ -224,6 +238,16 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
         public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<T, TMember>> destination, Expression<Func<DynamicTableEntity, TMember>> source)
         {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             var member = GetMemberInfoFromLambda(destination);
             _properties[member.Name] = new ReverseMapProperty<T, TMember>(source, member);
             return this;

@@ -3,6 +3,7 @@ using WindowsAzure.Table.EntityConverters.TypeData;
 using WindowsAzure.Tests.Samples;
 using Microsoft.WindowsAzure.Storage.Table;
 using Xunit;
+using System.Linq.Expressions;
 
 namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
 {
@@ -33,6 +34,53 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
             {
                 map = new EntityTypeMap<Address>(e =>
                     e.PartitionKey(p => p.Id).RowKey(p => p.Country));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterPartitionKeyMapClassMap_PartitionKeyMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.PartitionKeyMap(null));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterRowKeyMapClassMap_RowKeyMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.RowKeyMap(null));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterReverseClassMap_ReverseClassMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+            Expression<Func<Address, string>> destination = null;
+            Expression<Func<DynamicTableEntity, string>> src = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.ReverseMap(destination, src));
             });
 
             Assert.Null(map);
