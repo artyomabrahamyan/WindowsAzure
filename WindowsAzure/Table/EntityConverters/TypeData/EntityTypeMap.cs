@@ -132,7 +132,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
 
             // Check whether entity's composite key completely defined
             if (!_nameChanges.ContainsValue(PartitionKeyPropertyName) 
-                && !_nameChanges.ContainsValue(RowKeyPropertyName))
+                || !_nameChanges.ContainsValue(RowKeyPropertyName))
             {
                 var message = string.Format(Resources.EntityTypeDataMissingKey, _entityType);
                 throw new InvalidOperationException(message);
@@ -209,6 +209,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
                 throw new ArgumentNullException(nameof(propertyLambda));
             }
 
+            _nameChanges.Add(Guid.NewGuid().ToString(), PartitionKeyPropertyName);          
             _properties[PartitionKeyPropertyName] = new PartitionKeyMapProperty<T>(propertyLambda);
             return this;
         }
@@ -225,6 +226,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
                 throw new ArgumentNullException(nameof(propertyLambda));
             }
 
+            _nameChanges.Add(Guid.NewGuid().ToString(), RowKeyPropertyName);
             _properties[RowKeyPropertyName] = new RowKeyMapProperty<T>(propertyLambda);
             return this;
         }

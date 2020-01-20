@@ -16,7 +16,8 @@ namespace WindowsAzure.Tests.Samples
         {
             this.PartitionKeyMap(x => x.IntVal + "|")
             .ReverseMap(z => z.IntVal, x => int.Parse(x.PartitionKey.Split('|', StringSplitOptions.RemoveEmptyEntries)[0]))
-            .RowKey(x => x.StringVal);
+            .RowKeyMap(x => x.StringVal)
+            .ReverseMap(x => x.StringVal, y => y.RowKey);
         }
     }
 }
