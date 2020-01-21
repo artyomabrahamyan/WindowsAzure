@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsAzure.Table.EntityConverters;
-using WindowsAzure.Table.Extensions;
 using WindowsAzure.Table.Queryable;
 using WindowsAzure.Table.Queryable.Base;
 using WindowsAzure.Table.RequestExecutor;
@@ -91,7 +90,7 @@ namespace WindowsAzure.Table
             }
 
             return RequestExecutor.ExecuteAsync(entity, TableOperation.Insert, cancellationToken);
-        }
+        }        
 
         /// <summary>
         ///     Inserts a new entities.
@@ -249,6 +248,49 @@ namespace WindowsAzure.Table
         }
 
         /// <summary>
+        ///      Retrieves the entity by partition key and row key.
+        /// </summary>
+        /// <param name="partitionKey">Partition key.</param>
+        /// <param name="rowKey">Row key.</param>
+        /// <returns>Retrieved entity.</returns>
+        public TEntity Retrieve(string partitionKey, string rowKey)
+        {
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(partitionKey));
+            }
+
+            if (string.IsNullOrEmpty(rowKey))
+            {
+                throw new ArgumentNullException(nameof(rowKey));
+            }
+
+            return RequestExecutor.Execute(partitionKey, rowKey, TableOperation.Retrieve);
+        }
+
+        /// <summary>
+        ///     Retrieves the entity by partition key and row key asynchronously.
+        /// </summary>
+        /// <param name="partitionKey">Partition key.</param>
+        /// <param name="rowKey">Row key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entity.</returns>
+        public Task<TEntity> RetrieveAsync(string partitionKey, string rowKey, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(partitionKey));
+            }
+
+            if (string.IsNullOrEmpty(rowKey))
+            {
+                throw new ArgumentNullException(nameof(rowKey));
+            }
+
+            return RequestExecutor.ExecuteAsync(partitionKey, rowKey, TableOperation.Retrieve, cancellationToken);
+        }        
+
+        /// <summary>
         ///     Updates an entity.
         /// </summary>
         /// <param name="entity">Entity.</param>
@@ -322,7 +364,7 @@ namespace WindowsAzure.Table
             }
 
             RequestExecutor.ExecuteWithoutResult(entity, TableOperation.Delete);
-        }
+        }        
 
         /// <summary>
         ///     Removes an entity asynchronously.
@@ -337,6 +379,57 @@ namespace WindowsAzure.Table
             }
 
             return RequestExecutor.ExecuteWithoutResultAsync(entity, TableOperation.Delete, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Removes an entity with corresponding partition key and row key.
+        /// </summary>
+        /// <param name="partitionKey">Partition Key.</param>
+        /// <param name="rowKey">Row Key.</param>
+        public void Remove(string partitionKey, string rowKey)
+        {
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(partitionKey));
+            }
+
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(rowKey));
+            }
+
+            var tableEntity = new DynamicTableEntity
+            {
+                PartitionKey = partitionKey,
+                RowKey = rowKey,
+                ETag = "*",
+            };
+
+            RequestExecutor.ExecuteWithoutResult(tableEntity, TableOperation.Delete);
+        }
+
+        /// <summary>
+        ///     Removes an entity with corresponding partition key and row key asyncronously.
+        /// </summary>
+        /// <param name="partitionKey">Partition Key.</param>
+        /// <param name="rowKey">Row Key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public Task RemoveAsync(string partitionKey, string rowKey, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(partitionKey));
+            }
+
+            if (string.IsNullOrEmpty(partitionKey))
+            {
+                throw new ArgumentNullException(nameof(rowKey));
+            }
+
+            return RequestExecutor.ExecuteWithoutResultAsync(
+                new DynamicTableEntity(
+                    partitionKey, rowKey, etag: "*", properties: new Dictionary<string, EntityProperty>()), 
+                TableOperation.Delete, cancellationToken);
         }
 
         /// <summary>

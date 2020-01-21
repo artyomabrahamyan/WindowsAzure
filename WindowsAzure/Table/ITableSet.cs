@@ -112,6 +112,24 @@ namespace WindowsAzure.Table
         Task<IEnumerable<TEntity>> AddOrMergeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default (CancellationToken));
 
         /// <summary>
+        ///     Retrieves the entity by partition key and row key.
+        /// </summary>
+        /// <param name="partitionKey">Partition key.</param>
+        /// <param name="rowKey">Row key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entity.</returns>
+        TEntity Retrieve(string partitionKey, string rowKey);
+
+        /// <summary>
+        ///     Retrieves the entity by partition key and row key asynchronously.
+        /// </summary>
+        /// <param name="partitionKey">Partition key.</param>
+        /// <param name="rowKey">Row key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entity.</returns>
+        Task<TEntity> RetrieveAsync(string partitionKey, string rowKey, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         ///     Updates an entity.
         /// </summary>
         /// <param name="entity">Entity.</param>
@@ -155,6 +173,21 @@ namespace WindowsAzure.Table
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Result.</returns>
         Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default (CancellationToken));
+
+        /// <summary>
+        ///     Removes an entity with corresponding partition key and row key.
+        /// </summary>
+        /// <param name="partitionKey">Partition Key.</param>
+        /// <param name="rowKey">Row Key.</param>
+        void Remove(string partitionKey, string rowKey);
+
+        /// <summary>
+        ///     Removes an entity with corresponding partition key and row key asyncronously.
+        /// </summary>
+        /// <param name="partitionKey">Partition Key.</param>
+        /// <param name="rowKey">Row Key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        Task RemoveAsync(string partitionKey, string rowKey, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         ///     Removes an entities.
