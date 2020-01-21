@@ -148,6 +148,6 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
             Assert.NotNull(map.NameChanges);
             Assert.DoesNotContain(map.NameChanges, t => t.Key == "Country");
             Assert.Equal(2, map.NameChanges.Count);
-        }
+        }        
     }
 }

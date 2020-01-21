@@ -64,6 +64,55 @@ namespace WindowsAzure.Tests.Table.EntityConverters
         }
 
         [Fact]
+        public void ConvertFromEntityForProfileToTableEntityTest()
+        {
+            // Arrange          
+            var converter = new TableEntityConverter<EntityForProfile>();
+
+            var entity = new EntityForProfile
+            {
+                Pk = "PrimaryKey",
+                Rk = "RowKey",
+                IntVal = 26,
+            };
+
+            //Act
+            var tableEntity = converter.GetEntity(entity);
+            var properties = tableEntity.WriteEntity(new OperationContext());
+
+            // Assert
+            Assert.Equal(entity.Pk, tableEntity.PartitionKey);
+            Assert.Equal(entity.Rk, tableEntity.RowKey);
+            Assert.Equal(entity.IntVal, properties[nameof(EntityForProfile.IntVal)].Int32Value);
+            Assert.Equal("*", tableEntity.ETag);
+        }
+
+        [Fact]
+        public void ConvertFromTableEntityToEntityForProfileTest()
+        {
+            // Arrange          
+            var converter = new TableEntityConverter<EntityForProfile>();
+
+            var tableEntity = new DynamicTableEntity
+            {
+                PartitionKey = "PrimaryKey",
+                RowKey = "RowKey",
+                Properties = new Dictionary<string, EntityProperty>
+                {
+                    {nameof(EntityForProfile.IntVal), new EntityProperty(26)},
+                },
+            };            
+
+            //Act
+            var entity = converter.GetEntity(tableEntity);
+
+            // Assert
+            Assert.Equal(tableEntity.PartitionKey, entity.Pk);
+            Assert.Equal(tableEntity.RowKey, entity.Rk);
+            Assert.Equal(tableEntity.Properties[nameof(EntityForProfile.IntVal)].Int32Value, entity.IntVal);
+        }
+
+        [Fact]
         public void ConvertToEntity()
         {
             // Arrange
