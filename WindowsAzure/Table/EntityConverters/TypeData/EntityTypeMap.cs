@@ -209,7 +209,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
                 throw new ArgumentNullException(nameof(propertyLambda));
             }
 
-            _nameChanges.Add(Guid.NewGuid().ToString(), PartitionKeyPropertyName);          
+            _nameChanges.Add(PartitionKeyPropertyName, PartitionKeyPropertyName);          
             _properties[PartitionKeyPropertyName] = new PartitionKeyMapProperty<T>(propertyLambda);
             return this;
         }
@@ -226,7 +226,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
                 throw new ArgumentNullException(nameof(propertyLambda));
             }
 
-            _nameChanges.Add(Guid.NewGuid().ToString(), RowKeyPropertyName);
+            _nameChanges.Add(RowKeyPropertyName, RowKeyPropertyName);
             _properties[RowKeyPropertyName] = new RowKeyMapProperty<T>(propertyLambda);
             return this;
         }
