@@ -235,10 +235,10 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         ///     Reverse maps expression to property.
         /// </summary>
         /// <typeparam name="TMember">Source member.</typeparam>
-        /// <param name="source">Source lambda expression.</param>
-        /// <param name="destination">Destination lambda expression.</param>
+        /// <param name="destination">Destination member expression.</param>
+        /// <param name="source">Source member expression.</param>
         /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
-        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<DynamicTableEntity, TMember>> source, Expression<Func<T, TMember>> destination)
+        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<T, TMember>> destination, Expression<Func<DynamicTableEntity, TMember>> source)
         {
             if (destination == null)
             {

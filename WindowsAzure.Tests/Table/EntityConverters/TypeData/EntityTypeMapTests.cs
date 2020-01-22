@@ -174,14 +174,13 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
         [Fact]
         public void CreateTypeMapWithOnlyOneKeyThrows()
         {
-            // Arrange 
-            EntityTypeMap<Address> map = null;
+            // Arrange && Act
+            var map = new EntityTypeMap<Address>(e => e.PartitionKey(p => p.Country));
 
-            //Act && Assert
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                map = new EntityTypeMap<Address>(e => e.PartitionKey(p => p.Country));
-            });           
+            // Assert
+            Assert.NotNull(map.NameChanges);
+            Assert.Equal(1, map.NameChanges.Count);
+            Assert.Equal("PartitionKey", map.NameChanges["Country"]);                     
         }
 
         [Fact]
