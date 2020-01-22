@@ -398,14 +398,12 @@ namespace WindowsAzure.Table
                 throw new ArgumentNullException(nameof(rowKey));
             }
 
-            var tableEntity = new DynamicTableEntity
+            RequestExecutor.ExecuteWithoutResult(new DynamicTableEntity
             {
                 PartitionKey = partitionKey,
                 RowKey = rowKey,
                 ETag = "*",
-            };
-
-            RequestExecutor.ExecuteWithoutResult(tableEntity, TableOperation.Delete);
+            }, TableOperation.Delete);
         }
 
         /// <summary>
@@ -426,10 +424,12 @@ namespace WindowsAzure.Table
                 throw new ArgumentNullException(nameof(rowKey));
             }
 
-            return RequestExecutor.ExecuteWithoutResultAsync(
-                new DynamicTableEntity(
-                    partitionKey, rowKey, etag: "*", properties: new Dictionary<string, EntityProperty>()), 
-                TableOperation.Delete, cancellationToken);
+            return RequestExecutor.ExecuteWithoutResultAsync(new DynamicTableEntity
+            {
+                PartitionKey = partitionKey,
+                RowKey = rowKey,
+                ETag = "*",
+            }, TableOperation.Delete, cancellationToken);
         }
 
         /// <summary>

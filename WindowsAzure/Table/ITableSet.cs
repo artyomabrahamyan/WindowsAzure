@@ -116,7 +116,6 @@ namespace WindowsAzure.Table
         /// </summary>
         /// <param name="partitionKey">Partition key.</param>
         /// <param name="rowKey">Row key.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Retrieved entity.</returns>
         TEntity Retrieve(string partitionKey, string rowKey);
 

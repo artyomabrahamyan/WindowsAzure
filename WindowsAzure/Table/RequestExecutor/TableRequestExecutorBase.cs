@@ -83,7 +83,8 @@ namespace WindowsAzure.Table.RequestExecutor
         /// <summary>
         ///     Executes operation.
         /// </summary>
-        /// <param name="entity">Entity.</param>
+        /// <param name="partitionKey">Entity.</param>
+        /// <param name="rowKey">Entity.</param>
         /// <param name="operation">Operation.</param>
         /// <returns>Result entity.</returns>
         public T Execute(string partitionKey, string rowKey, Func<string, string, List<string>, TableOperation> operation)
@@ -93,10 +94,12 @@ namespace WindowsAzure.Table.RequestExecutor
         }
 
         /// <summary>
-        ///     Executes operation.
+        ///     Executes operation asynchronously.
         /// </summary>
-        /// <param name="entity">Entity.</param>
+        /// <param name="partitionKey">Entity.</param>
+        /// <param name="rowKey">Entity.</param>
         /// <param name="operation">Operation.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Result entity.</returns>
         public Task<T> ExecuteAsync(string partitionKey, string rowKey, Func<string, string, List<string>, TableOperation> operation, CancellationToken cancellationToken)
         {
