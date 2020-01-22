@@ -132,7 +132,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
 
             // Check whether entity's composite key completely defined
             if (!_nameChanges.ContainsValue(PartitionKeyPropertyName) 
-                || !_nameChanges.ContainsValue(RowKeyPropertyName))
+                && !_nameChanges.ContainsValue(RowKeyPropertyName))
             {
                 var message = string.Format(Resources.EntityTypeDataMissingKey, _entityType);
                 throw new InvalidOperationException(message);
@@ -235,10 +235,10 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         ///     Reverse maps expression to property.
         /// </summary>
         /// <typeparam name="TMember">Source member.</typeparam>
-        /// <param name="destination">Destination lambda expression.</param>
         /// <param name="source">Source lambda expression.</param>
+        /// <param name="destination">Destination lambda expression.</param>
         /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
-        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<T, TMember>> destination, Expression<Func<DynamicTableEntity, TMember>> source)
+        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<DynamicTableEntity, TMember>> source, Expression<Func<T, TMember>> destination)
         {
             if (destination == null)
             {
