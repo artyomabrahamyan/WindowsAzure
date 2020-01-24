@@ -82,7 +82,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         {
             foreach (var assembly in assembliesToSearch)
             {
-                var types = assembly.GetExportedTypes()
+                var types = assembly.GetTypes()
                     .Where(IsMappingType)
                     .ToList();
 
