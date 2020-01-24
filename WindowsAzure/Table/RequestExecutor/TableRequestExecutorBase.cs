@@ -60,6 +60,59 @@ namespace WindowsAzure.Table.RequestExecutor
         }
 
         /// <summary>
+        ///     Executes operation without returning result.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="operation">Operation.</param>
+        public void ExecuteWithoutResult(ITableEntity entity, Func<ITableEntity, TableOperation> operation)
+        {
+            _cloudTable.Execute(operation(entity));
+        }
+
+        /// <summary>
+        ///     Executes operation without returning result asyncronously.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="operation">Operation.</param>
+        /// <param name="cancellationToken">Operation.</param>
+        public Task ExecuteWithoutResultAsync(ITableEntity entity, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken)
+        {
+            return _cloudTable.ExecuteAsync(operation(entity), cancellationToken);
+        }
+
+        /// <summary>
+        ///     Executes operation.
+        /// </summary>
+        /// <param name="partitionKey">Entity.</param>
+        /// <param name="rowKey">Entity.</param>
+        /// <param name="operation">Operation.</param>
+        /// <returns>Result entity.</returns>
+        public T Execute(string partitionKey, string rowKey, Func<string, string, List<string>, TableOperation> operation)
+        {
+            TableResult result = _cloudTable.Execute(operation(partitionKey, rowKey, null));
+            return _entityConverter.GetEntity((DynamicTableEntity)result.Result);       
+        }
+
+        /// <summary>
+        ///     Executes operation asynchronously.
+        /// </summary>
+        /// <param name="partitionKey">Entity.</param>
+        /// <param name="rowKey">Entity.</param>
+        /// <param name="operation">Operation.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Result entity.</returns>
+        public Task<T> ExecuteAsync(string partitionKey, string rowKey, Func<string, string, List<string>, TableOperation> operation, CancellationToken cancellationToken)
+        {
+            return _cloudTable
+                .ExecuteAsync(operation(partitionKey, rowKey, null), cancellationToken)
+                .Then(result =>
+                {
+                    var value = (DynamicTableEntity)result.Result;
+                    return _entityConverter.GetEntity(value);
+                }, cancellationToken);
+        }
+
+        /// <summary>
         ///     Executes operation asynchronously.
         /// </summary>
         /// <param name="entity">Entity.</param>
@@ -97,6 +150,6 @@ namespace WindowsAzure.Table.RequestExecutor
 
         public abstract Task<IEnumerable<T>> ExecuteBatchesAsync(IEnumerable<T> entities, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken);
 
-        public abstract Task ExecuteBatchesWithoutResultAsync(IEnumerable<T> entities, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken);
+        public abstract Task ExecuteBatchesWithoutResultAsync(IEnumerable<T> entities, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken);        
     }
 }

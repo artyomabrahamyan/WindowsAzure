@@ -21,12 +21,44 @@ namespace WindowsAzure.Table.RequestExecutor
         T Execute(T entity, Func<ITableEntity, TableOperation> operation);
 
         /// <summary>
+        ///     Executes operation.
+        /// </summary>
+        /// <param name="partitionKey">Partition key.</param>
+        /// <param name="rowKey">Row key.</param>
+        /// <param name="operation">Operation.</param>
+        /// <returns>Result entity.</returns>
+        T Execute(string partitionKey, string rowKey, Func<string, string, List<string>, TableOperation> operation);
+
+        /// <summary>
+        ///     Executes operation asynchronously.
+        /// </summary>
+        /// <param name="partitionKey">Entity.</param>
+        /// <param name="rowKey">Operation.</param>
+        /// <returns>Result entity.</returns>
+        Task<T> ExecuteAsync(string partitionKey, string rowKey, Func<string, string , List<string>, TableOperation> operation, CancellationToken cancellationToken);
+
+        /// <summary>
         ///     Executes operation without returning result.
         /// </summary>
         /// <param name="entity">Entity.</param>
         /// <param name="operation">Operation.</param>
         void ExecuteWithoutResult(T entity, Func<ITableEntity, TableOperation> operation);
+        
+        /// <summary>
+        ///     Executes operation without returning result.
+        /// </summary>
+        /// <param name="entity">Table entity.</param>
+        /// <param name="operation">Operation.</param
+        void ExecuteWithoutResult(ITableEntity entity, Func<ITableEntity, TableOperation> operation);
 
+        /// <summary>
+        ///     Executes operation without returning result asynchronously.
+        /// </summary>
+        /// <param name="entity">Table entity.</param>
+        /// <param name="operation">Operation.</param
+        /// <param name="cancellationToken">Cancellation token.</param
+        Task ExecuteWithoutResultAsync(ITableEntity entity, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken);
+        
         /// <summary>
         ///     Executes operation asynchronously.
         /// </summary>
