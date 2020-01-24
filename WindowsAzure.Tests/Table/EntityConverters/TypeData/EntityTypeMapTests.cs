@@ -42,6 +42,53 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
         }
 
         [Fact]
+        public void RegisterPartitionKeyMapClassMap_PartitionKeyMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.PartitionKeyMap(null));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterRowKeyMapClassMap_RowKeyMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.RowKeyMap(null));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterReverseClassMap_ReverseClassMapIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+            Expression<Func<Address, string>> destination = null;
+            Expression<Func<DynamicTableEntity, string>> src = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.ReverseMap(destination, src));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
         public void RegisterSerializeClassMap_SerializeExpressIsNull_ExceptionThrown()
         {
             // Arrange
@@ -146,13 +193,13 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
         [Fact]
         public void CreateTypeMapWithOnlyOneKey()
         {
-            // Arrange & Act
+            // Arrange && Act
             var map = new EntityTypeMap<Address>(e => e.PartitionKey(p => p.Country));
 
             // Assert
             Assert.NotNull(map.NameChanges);
             Assert.Equal(1, map.NameChanges.Count);
-            Assert.Equal("PartitionKey", map.NameChanges["Country"]);
+            Assert.Equal("PartitionKey", map.NameChanges["Country"]);                     
         }
 
         [Fact]

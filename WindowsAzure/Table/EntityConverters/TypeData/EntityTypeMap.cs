@@ -167,7 +167,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
             _properties.Remove(member.Name);
             _propertiesToIgnore.Add(member.Name);
             return this;
-        }
+        }        
 
         public EntityTypeMap<T> Serialize<TMember>(Expression<Func<T, TMember>> propertyLambda, string propertyName = null)
         {
@@ -210,6 +210,64 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
             var member = GetMemberInfoFromLambda(propertyLambda);
             _nameChanges.Add(member.Name, PartitionKeyPropertyName);
             _properties[member.Name] = new PartitionKeyProperty<T>(member);
+            return this;
+        }
+
+        /// <summary>
+        ///     Maps a partition key property to custom expression.
+        /// </summary>
+        /// <param name="propertyLambda">Property lambda expression.</param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> PartitionKeyMap(Expression<Func<T, string>> propertyLambda)
+        {
+            if (propertyLambda == null)
+            {
+                throw new ArgumentNullException(nameof(propertyLambda));
+            }
+
+            _nameChanges.Add(PartitionKeyPropertyName, PartitionKeyPropertyName);          
+            _properties[PartitionKeyPropertyName] = new PartitionKeyMapProperty<T>(propertyLambda);
+            return this;
+        }
+
+        /// <summary>
+        /// Maps a row key property to custom expression.
+        /// </summary>
+        /// <param name="propertyLambda"></param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> RowKeyMap(Expression<Func<T, string>> propertyLambda)
+        {
+            if (propertyLambda == null)
+            {
+                throw new ArgumentNullException(nameof(propertyLambda));
+            }
+
+            _nameChanges.Add(RowKeyPropertyName, RowKeyPropertyName);
+            _properties[RowKeyPropertyName] = new RowKeyMapProperty<T>(propertyLambda);
+            return this;
+        }
+
+        /// <summary>
+        ///     Reverse maps expression to property.
+        /// </summary>
+        /// <typeparam name="TMember">Source member.</typeparam>
+        /// <param name="destination">Destination member expression.</param>
+        /// <param name="source">Source member expression.</param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> ReverseMap<TMember>(Expression<Func<T, TMember>> destination, Expression<Func<DynamicTableEntity, TMember>> source)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var member = GetMemberInfoFromLambda(destination);
+            _properties[member.Name] = new ReverseMapProperty<T, TMember>(source, member);
             return this;
         }
 

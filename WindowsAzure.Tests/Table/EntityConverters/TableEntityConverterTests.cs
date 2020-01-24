@@ -181,7 +181,93 @@ namespace WindowsAzure.Tests.Table.EntityConverters
             Assert.Equal(entity.Id, tableEntity.PartitionKey);
             Assert.Null(tableEntity.RowKey);
             Assert.Equal(entity.Message, tableEntity.Properties["OldMessage"].StringValue);
-        }       
+        }
+
+        [Fact]
+        public void ConvertToTableEntityWithPropertyMapping()
+        {
+            // Arrange
+            var converter = new TableEntityConverter<EntityWithMappedKey>();
+            var entity = new EntityWithMappedKey
+            {
+                StringVal = "26",
+                IntVal = 26,
+            };
+
+            // Act
+            var tableEntity = converter.GetEntity(entity) as DynamicTableEntity;
+
+            //Assert
+            Assert.Equal(tableEntity.PartitionKey, $"{entity.IntVal}|");
+            Assert.Equal(tableEntity.RowKey, entity.StringVal);
+            Assert.Empty(tableEntity.WriteEntity(new OperationContext()));            
+        }
+
+        [Fact]
+        public void ConvertToEntityWithPropertyMapping()
+        {
+            // Arrange
+            var converter = new TableEntityConverter<EntityWithMappedKey>();
+            var entity = new EntityWithMappedKey
+            {
+                StringVal = "26",
+                IntVal = 26,
+            };
+
+            // Act
+            var tableEntity = converter.GetEntity(entity) as DynamicTableEntity;
+            var convertedEntity = converter.GetEntity(tableEntity);
+
+            //Assert
+            Assert.NotNull(convertedEntity);
+            Assert.Equal(convertedEntity.IntVal, entity.IntVal);
+            Assert.Equal(convertedEntity.StringVal, entity.StringVal);
+        }
+
+        [Fact]
+        public void ConvertToTableEntityFromEntityWithReverseMapWithPropertyMapping()
+        {
+            // Arrange
+            var converter = new TableEntityConverter<EntityForReverseMap>();
+            var entity = new EntityForReverseMap
+            {
+                NestedEntity = NestedEntity.Create("10"),
+                RowKey = "25",
+                DateTimeOffset = DateTimeOffset.UtcNow
+            };
+
+            // Act
+            var tableEntity = converter.GetEntity(entity) as DynamicTableEntity;
+
+            //Assert
+            Assert.Equal(tableEntity.PartitionKey,
+                $"{entity.NestedEntity.DecimalValue}|{entity.DateTimeOffset.UtcDateTime.ToString("yyyyMMdd")}");
+            Assert.Equal(tableEntity.RowKey, entity.RowKey);
+            Assert.Empty(tableEntity.WriteEntity(new OperationContext()));           
+        }
+
+        [Fact]
+        public void ConvertToEntityWithReverseMapWithPropertyMapping()
+        {
+            // Arrange
+            var converter = new TableEntityConverter<EntityForReverseMap>();
+            var entity = new EntityForReverseMap
+            {
+                NestedEntity = NestedEntity.Create("10"),
+                RowKey = "25",
+                DateTimeOffset = DateTimeOffset.UtcNow
+            };
+
+            // Act
+            var tableEntity = converter.GetEntity(entity) as DynamicTableEntity;
+            var convertedEntity = converter.GetEntity(tableEntity);
+
+            //Assert
+            Assert.NotNull(convertedEntity);
+            Assert.Equal(convertedEntity.RowKey, entity.RowKey);
+            Assert.Equal(convertedEntity.NestedEntity.DecimalValue, entity.NestedEntity.DecimalValue);
+            Assert.Equal(convertedEntity.DateTimeOffset.Date, entity.DateTimeOffset.Date);
+        }               
 
         [Fact]
         public void ConvertFromEntityWithSerializeAttribute()
