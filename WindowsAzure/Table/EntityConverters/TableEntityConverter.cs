@@ -17,6 +17,12 @@ namespace WindowsAzure.Table.EntityConverters
         /// </summary>
         public TableEntityConverter()
         {
+            var profileEntityTypeData = ProfileEntityTypeDataFactory.GetEntityTypeData<T>();
+            if (profileEntityTypeData != null)
+            {
+                EntityTypeDataFactory.RegisterEntityTypeData(profileEntityTypeData);
+            }
+
             _typeData = EntityTypeDataFactory.GetEntityTypeData<T>();
         }
 

@@ -22,5 +22,6 @@
         public const string TranslatorUnableToEvaluateExpression = "Unable to evaluate an expression: '{0}'.";
         public const string TranslatorUnableToTranslateMethod = "Unable to translate method: '{0}'.";
         public const string ValueAccessorFactoryNotSupportedType = "Member type '{0}' does not supported.";
+        public const string ProfileCannotBeCreated = "Profile type '{0}' can not be created.";
     }
 }
