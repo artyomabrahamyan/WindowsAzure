@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
 {
-    public class RowKeyMapProperty<T> : IProperty<T>
+    internal class RowKeyMapProperty<T> : IProperty<T>
     {
         private Expression<Func<T, string>> _propertyAccessor;
 
@@ -34,7 +34,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
         /// <param name="entity">POCO entity.</param>
         public void SetMemberValue(DynamicTableEntity tableEntity, T entity)
         {
-            // Do nothing if called.
+            // Nothing.
         }
     }
 }

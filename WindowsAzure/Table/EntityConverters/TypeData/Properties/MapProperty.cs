@@ -5,20 +5,23 @@ using System.Linq.Expressions;
 namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
 {
     /// <summary>
-    ///     Handles access to the partition key value from custom mapping.
+    ///     Handles accesss to the member property for mapping.
     /// </summary>
-    /// <typeparam name="T">Entity type.</typeparam>
-    internal class PartitionKeyMapProperty<T> : IProperty<T>
+    /// <typeparam name="T">Entity type</typeparam>
+    internal class MapProperty<T> : IProperty<T>
     {
-        private Expression<Func<T, string>> _propertyAccessor;
+        private readonly Expression<Func<T, string>> _source;
+        private readonly string _propertyName;
 
         /// <summary>
         ///     Constructor.
         /// </summary>
-        /// <param name="propertyAccessor">Property accessor.</param>
-        public PartitionKeyMapProperty(Expression<Func<T, string>> propertyAccessor)
+        /// <param name="source">Entity type expression that returns string from mapping.</param>
+        /// <param name="propertyName">Dynamic table entity property name.</param>
+        public MapProperty(Expression<Func<T, string>> source, string propertyName)
         {
-            _propertyAccessor = propertyAccessor ?? throw new ArgumentNullException(nameof(propertyAccessor));
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _propertyName = string.IsNullOrEmpty(propertyName) ? throw new ArgumentNullException(nameof(propertyName)) : propertyName;
         }
 
 
@@ -29,7 +32,8 @@ namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
         /// <param name="tableEntity">Table entity.</param>
         public void GetMemberValue(T entity, DynamicTableEntity tableEntity)
         {
-            tableEntity.PartitionKey = _propertyAccessor.Compile().Invoke(entity);
+            var stringProperty = _source.Compile().Invoke(entity);
+            tableEntity.Properties.Add(_propertyName, new EntityProperty(stringProperty));
         }
 
         /// <summary>

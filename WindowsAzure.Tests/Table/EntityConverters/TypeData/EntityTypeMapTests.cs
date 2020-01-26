@@ -61,7 +61,7 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
         {
             EntityTypeMap<Address> map = null;
 
-            // Arrange & Act & Asset
+            // Arrange & Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
                 map = new EntityTypeMap<Address>(e =>
@@ -78,7 +78,7 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
             Expression<Func<Address, string>> destination = null;
             Expression<Func<DynamicTableEntity, string>> src = null;
 
-            // Arrange & Act & Asset
+            // Arrange & Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
                 map = new EntityTypeMap<Address>(e =>
@@ -86,6 +86,58 @@ namespace WindowsAzure.Tests.Table.EntityConverters.TypeData
             });
 
             Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterMapClassMap_MapDestinationIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+            Expression<Func<Address, string>> destination  = null;
+            Expression<Func<Address, string>> src = x => x.ToString();
+
+            // Arrange & Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.Map(destination, src));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterMapClassMap_MapSourceIsNull_ExceptionThrown()
+        {
+            EntityTypeMap<Address> map = null;
+            Expression<Func<Address, string>> destination = x => x.ToString();
+            Expression<Func<Address, string>> src = null;
+
+            // Arrange & Act & Asset
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                map = new EntityTypeMap<Address>(e =>
+                    e.Map(destination, src));
+            });
+
+            Assert.Null(map);
+        }
+
+        [Fact]
+        public void RegisterMapClassMap_CustomPropertyName_ShouldAddToNameChanges()
+        {
+            //Arrange
+            Expression<Func<EntityWithMappedProperty, EntityWithMappedProperty.Id>> destination = x => x.EntityId;
+            Expression<Func<EntityWithMappedProperty, string>> src = x => x.EntityId.ToString();
+            var propertyName = $"{nameof(EntityWithMappedProperty.EntityId)}Raw";
+
+            // Act
+            var map = new EntityTypeMap<EntityWithMappedProperty>(e => 
+                e.PartitionKey(x => x.Pk).RowKey(x => x.Rk).Map(destination, src, propertyName));
+
+            // Assert
+            Assert.NotNull(map);
+            Assert.NotEmpty(map.NameChanges);
+            Assert.Contains(propertyName, map.NameChanges.Values);
         }
 
         [Fact]

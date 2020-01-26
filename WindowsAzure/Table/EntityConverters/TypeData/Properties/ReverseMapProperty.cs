@@ -10,7 +10,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
     /// </summary>
     /// <typeparam name="T">Entity type.</typeparam>
     /// <typeparam name="TMember">Member type.</typeparam>
-    public class ReverseMapProperty<T, TMember> : IProperty<T>
+    internal class ReverseMapProperty<T, TMember> : IProperty<T>
     {
         private readonly Expression<Func<DynamicTableEntity, TMember>> _source;
         private readonly MemberInfo _member;
@@ -18,7 +18,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
         /// <summary>
         ///     Constructor.
         /// </summary>
-        /// <param name="source">Dynamic table entity member.</param>
+        /// <param name="source">Dynamic table entity expression.</param>
         /// <param name="member">Entity member.</param>
         public ReverseMapProperty(Expression<Func<DynamicTableEntity, TMember>> source, MemberInfo member)
         {
@@ -33,7 +33,7 @@ namespace WindowsAzure.Table.EntityConverters.TypeData.Properties
         /// <param name="tableEntity">Table entity.</param>
         public void GetMemberValue(T entity, DynamicTableEntity tableEntity)
         {
-            // Do nothing if called.
+            // Nothing.
         }
 
         /// <summary>
