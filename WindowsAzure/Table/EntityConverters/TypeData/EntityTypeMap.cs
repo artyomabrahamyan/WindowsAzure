@@ -232,6 +232,43 @@ namespace WindowsAzure.Table.EntityConverters.TypeData
         }
 
         /// <summary>
+        ///   Maps expression to property.
+        /// </summary>
+        /// <typeparam name="TMember">Source member.</typeparam>
+        /// <param name="destination">Destination member expression.</param>
+        /// <param name="source">Source member expression.</param>
+        /// <returns>Current instance of <see cref="T:WindowsAzure.Table.EntityConverters.TypeData.EntityTypeMap" />.</returns>
+        public EntityTypeMap<T> Map<TMember>(
+            Expression<Func<T, TMember>> destination, Expression<Func<T, string>> source, string propName = null)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var key = Guid.NewGuid().ToString();
+            var memberName = GetMemberInfoFromLambda(destination)?.Name;
+
+            if (!string.IsNullOrEmpty(propName))
+            {
+                _nameChanges.Add(key, propName);
+            }
+            else
+            {
+                propName = memberName;
+            }
+
+            _propertiesToIgnore.Add(memberName);
+            _properties[key] = new MapProperty<T>(source, propName);
+            return this;
+        }
+
+        /// <summary>
         ///     Reverse maps expression to property.
         /// </summary>
         /// <typeparam name="TMember">Source member.</typeparam>

@@ -266,5 +266,59 @@ namespace WindowsAzure.Tests.Table.EntityConverters
             Assert.Equal(convertedEntity.NestedEntity.DecimalValue, entity.NestedEntity.DecimalValue);
             Assert.Equal(convertedEntity.DateTimeOffset.Date, entity.DateTimeOffset.Date);
         }
+
+        [Fact]
+        public void ConvertToEntityWithMappedProperty()
+        {
+            // Arrange
+            var converter = new TableEntityConverter<EntityWithMappedProperty>();
+            var expectedEntity = new EntityWithMappedProperty { Pk = "Pk", Rk = "Rk", EntityId = new EntityWithMappedProperty.Id(25, 99) };
+            var tableEntity = new DynamicTableEntity
+            {
+                PartitionKey = "Pk",
+                RowKey = "Rk",
+                Properties = new Dictionary<string, EntityProperty>
+                {
+                    { "EntityIdRaw", new EntityProperty("25.99") }
+                }
+            };
+
+            // Act
+            var convertedEntity = converter.GetEntity(tableEntity);
+
+            //Assert
+            Assert.NotNull(convertedEntity);
+            Assert.Equal(expectedEntity.Pk, convertedEntity.Pk);
+            Assert.Equal(expectedEntity.Rk, convertedEntity.Rk);
+            Assert.Equal(expectedEntity.EntityId.ToString(), convertedEntity.EntityId.ToString());
+        }
+
+        [Fact]
+        public void ConvertToTableEntityWithMappedProperty()
+        {
+            // Arrange
+            var entityIdRaw = "EntityIdRaw";
+            var converter = new TableEntityConverter<EntityWithMappedProperty>();
+            var entity = new EntityWithMappedProperty { Pk = "Pk", Rk = "Rk", EntityId = new EntityWithMappedProperty.Id(25, 99) };
+            var expectedTableEntity = new DynamicTableEntity
+            {
+                PartitionKey = "Pk",
+                RowKey = "Rk",
+                Properties = new Dictionary<string, EntityProperty>
+                {
+                    { entityIdRaw, new EntityProperty("25.99") }
+                }
+            };
+
+            // Act
+            var tableEntity = converter.GetEntity(entity) as DynamicTableEntity;
+
+            //Assert
+            Assert.NotNull(tableEntity);
+            Assert.NotEmpty(tableEntity.Properties);
+            Assert.Equal(expectedTableEntity.PartitionKey, tableEntity.PartitionKey);
+            Assert.Equal(expectedTableEntity.RowKey, tableEntity.RowKey);
+            Assert.Equal(expectedTableEntity.Properties[entityIdRaw].StringValue, tableEntity.Properties[entityIdRaw].StringValue);
+        }
     }
 }
