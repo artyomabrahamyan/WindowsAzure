@@ -496,7 +496,7 @@ namespace WindowsAzure.Table
         /// </returns>
         public bool CreateIfNotExists()
         {
-            return _cloudTable.CreateIfNotExists();
+            return _cloudTable.CreateIfNotExistsAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>

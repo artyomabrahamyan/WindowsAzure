@@ -477,15 +477,19 @@ namespace WindowsAzure.Table.Extensions
             do
             {
                 var result = await cloudTable.ExecuteQuerySegmentedAsync(tableQuery, token, null, null, cancellationToken);
-                tableEntities.AddRange(result.Results);
-
-                // Checks whether TakeCount entities has been received
-                if (tableQuery.TakeCount.HasValue && tableEntities.Count >= tableQuery.TakeCount.Value)
+                if (result != null)
                 {
-                    return tableEntities.Take(tableQuery.TakeCount.Value).ToList();
-                }
+                    tableEntities.AddRange(result.Results);
 
-                token = result.ContinuationToken;
+                    // Checks whether TakeCount entities has been received
+                    if (tableQuery.TakeCount.HasValue && tableEntities.Count >= tableQuery.TakeCount.Value)
+                    {
+                        return tableEntities.Take(tableQuery.TakeCount.Value).ToList();
+                    }
+
+                    token = result.ContinuationToken;
+                }
+                
             } while (token != null);
 
             return tableEntities;
