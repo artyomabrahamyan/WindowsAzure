@@ -59,28 +59,7 @@ namespace WindowsAzure.Table.RequestExecutor
         {
             ITableEntity tableEntity = _entityConverter.GetEntity(entity);
             _cloudTable.Execute(operation(tableEntity));
-        }
-
-        /// <summary>
-        ///     Executes operation without returning result.
-        /// </summary>
-        /// <param name="entity">Entity.</param>
-        /// <param name="operation">Operation.</param>
-        public void ExecuteWithoutResult(ITableEntity entity, Func<ITableEntity, TableOperation> operation)
-        {
-            _cloudTable.Execute(operation(entity));
-        }
-
-        /// <summary>
-        ///     Executes operation without returning result asyncronously.
-        /// </summary>
-        /// <param name="entity">Entity.</param>
-        /// <param name="operation">Operation.</param>
-        /// <param name="cancellationToken">Operation.</param>
-        public Task ExecuteWithoutResultAsync(ITableEntity entity, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken)
-        {
-            return _cloudTable.ExecuteAsync(operation(entity), cancellationToken);
-        }       
+        }             
 
         /// <summary>
         ///     Executes table query asynchronously.
