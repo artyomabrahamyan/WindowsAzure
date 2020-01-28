@@ -8,7 +8,7 @@ namespace WindowsAzure.Table.RequestExecutor
     /// <summary>
     ///     Handles construction of table request executors.
     /// </summary>
-    internal sealed class TableRequestExecutorFactory<T> where T : new()
+    internal sealed class TableRequestExecutorFactory<T> where T : class, new()
     {
         internal readonly ICloudTable CloudTable;
         private readonly ITableEntityConverter<T> _entityConverter;

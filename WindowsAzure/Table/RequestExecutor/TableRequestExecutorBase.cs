@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -8,7 +10,7 @@ using WindowsAzure.Table.Wrappers;
 
 namespace WindowsAzure.Table.RequestExecutor
 {
-    internal abstract class TableRequestExecutorBase<T> : ITableRequestExecutor<T> where T : new()
+    internal abstract class TableRequestExecutorBase<T> : ITableRequestExecutor<T> where T : class, new()
     {
         private readonly ICloudTable _cloudTable;
         private readonly ITableEntityConverter<T> _entityConverter;
@@ -78,7 +80,26 @@ namespace WindowsAzure.Table.RequestExecutor
         public Task ExecuteWithoutResultAsync(ITableEntity entity, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken)
         {
             return _cloudTable.ExecuteAsync(operation(entity), cancellationToken);
-        }
+        }       
+
+        /// <summary>
+        ///     Executes table query asynchronously.
+        /// </summary>
+        /// <param name="query">Table query.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Result entity.</returns>
+        public async Task<IEnumerable<T>> ExecuteAsync(ITableQuery query, CancellationToken cancellationToken)
+        {         
+            if (query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+
+            var results = await _cloudTable
+                .ExecuteQueryAsync(query, cancellationToken);
+
+            return results?.Select(e => _entityConverter.GetEntity(e));
+        }       
 
         /// <summary>
         ///     Executes operation.

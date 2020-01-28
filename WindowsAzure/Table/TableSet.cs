@@ -8,6 +8,7 @@ using WindowsAzure.Table.Queryable.Base;
 using WindowsAzure.Table.RequestExecutor;
 using WindowsAzure.Table.Wrappers;
 using Microsoft.WindowsAzure.Storage.Table;
+using System.Linq.Expressions;
 
 namespace WindowsAzure.Table
 {
@@ -245,6 +246,50 @@ namespace WindowsAzure.Table
             }
 
             return RequestExecutor.ExecuteBatchesAsync(entities, TableOperation.InsertOrMerge, cancellationToken);
+        }           
+
+        /// <summary>
+        ///     Retrieves entities by partition key asynchronously.
+        /// </summary>
+        /// <param name="parititionKeyValue">Partition key value.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entities.</returns>
+        public async Task<IEnumerable<TEntity>> RetrieveByPartitionKeyAsync(string parititionKeyValue, CancellationToken cancellationToken = default(CancellationToken))
+        {      
+            if (string.IsNullOrEmpty(parititionKeyValue))
+            {
+                throw new ArgumentNullException(nameof(parititionKeyValue));
+            }
+
+            var tableQuery = new TableQueryWrapper(new TableQuery
+            {
+                FilterString = TableQuery.GenerateFilterCondition(
+                    nameof(ITableEntity.PartitionKey), QueryComparisons.Equal, parititionKeyValue),
+            });
+
+            return await RequestExecutor.ExecuteAsync(tableQuery, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Retrieves entities by row key asynchronously.
+        /// </summary>
+        /// <param name="rowKeyValue">Row key value.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entities.</returns>
+        public async Task<IEnumerable<TEntity>> RetrieveByRowKeyAsync(string rowKeyValue, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (string.IsNullOrEmpty(rowKeyValue))
+            {
+                throw new ArgumentNullException(nameof(rowKeyValue));
+            }
+
+            var tableQuery = new TableQueryWrapper(new TableQuery
+            {
+                FilterString = TableQuery.GenerateFilterCondition(
+                   nameof(ITableEntity.PartitionKey), QueryComparisons.Equal, rowKeyValue),
+            });
+
+            return await RequestExecutor.ExecuteAsync(tableQuery, cancellationToken);
         }
 
         /// <summary>

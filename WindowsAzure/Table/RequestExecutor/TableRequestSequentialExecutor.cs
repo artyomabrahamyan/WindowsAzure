@@ -13,7 +13,7 @@ namespace WindowsAzure.Table.RequestExecutor
     ///     Handles query execution.
     /// </summary>
     /// <typeparam name="T">Entity type.</typeparam>
-    internal sealed class TableRequestSequentialExecutor<T> : TableRequestExecutorBase<T> where T : new()
+    internal sealed class TableRequestSequentialExecutor<T> : TableRequestExecutorBase<T> where T : class, new()
     {
         private readonly ICloudTable _cloudTable;
         private readonly ITableEntityConverter<T> _entityConverter;

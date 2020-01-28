@@ -109,7 +109,23 @@ namespace WindowsAzure.Table
         /// <param name="entities">Entities collection.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Inserted entities.</returns>
-        Task<IEnumerable<TEntity>> AddOrMergeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default (CancellationToken));
+        Task<IEnumerable<TEntity>> AddOrMergeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default (CancellationToken));       
+
+        /// <summary>
+        ///     Retrieves entities by partition key asynchronously.
+        /// </summary>
+        /// <param name="parititionKeyValue">Partition key value.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entities.</returns>
+        Task<IEnumerable<TEntity>> RetrieveByPartitionKeyAsync(string parititionKeyValue, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        ///     Retrieves entities by row key asynchronously.
+        /// </summary>
+        /// <param name="rowKeyValue">Row key value.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Retrieved entities.</returns>
+        Task<IEnumerable<TEntity>> RetrieveByRowKeyAsync(string rowKeyValue, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         ///     Retrieves the entity by partition key and row key.
