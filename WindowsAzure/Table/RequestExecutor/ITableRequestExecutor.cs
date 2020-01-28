@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
+using WindowsAzure.Table.Wrappers;
 
 namespace WindowsAzure.Table.RequestExecutor
 {
@@ -43,6 +44,14 @@ namespace WindowsAzure.Table.RequestExecutor
         /// <param name="operation">Operation.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         Task ExecuteWithoutResultAsync(T entity, Func<ITableEntity, TableOperation> operation, CancellationToken cancellationToken);
+
+        /// <summary>
+        ///     Executes table query asynchronously.
+        /// </summary>
+        /// <param name="query">Table query.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Result entity.</returns>
+        Task<IEnumerable<T>> ExecuteAsync(ITableQuery query, CancellationToken cancellationToken);
 
         /// <summary>
         ///     Executes batch operations.
